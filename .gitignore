@@ -1,0 +1,3 @@
+echo ".env" >> .gitignore
+echo "dist/" >> .gitignore  # If you're using TypeScript
+echo "logs/" >> .gitignore
