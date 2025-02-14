@@ -15,41 +15,48 @@ const pool = new Pool({
 
 console.log("Connecting to DB at:", process.env.DB_IP || "localhost");
 
-// New endpoint: GET /api/endpoints returns a list of available endpoints.
+// Function to generate endpoints list
+const getEndpointsList = () => [
+  {
+    method: "GET",
+    path: "/api",
+    description: "List all available API endpoints",
+  },
+  {
+    method: "GET",
+    path: "/api/users",
+    description: "Retrieve all users",
+  },
+  {
+    method: "GET",
+    path: "/api/users/:id",
+    description: "Retrieve a specific user by ID",
+  },
+  {
+    method: "POST",
+    path: "/api/users",
+    description: "Create a new user",
+  },
+  {
+    method: "PUT",
+    path: "/api/users/:id",
+    description: "Update an existing user",
+  },
+  {
+    method: "DELETE",
+    path: "/api/users/:id",
+    description: "Delete a user",
+  },
+];
+
+// New endpoint: GET /api returns a list of available API endpoints.
+router.get("/", (req, res) => {
+  res.json({ endpoints: getEndpointsList() });
+});
+
+// Also keep the existing /api/endpoints route.
 router.get("/endpoints", (req, res) => {
-  const endpoints = [
-    {
-      method: "GET",
-      path: "/api/endpoints",
-      description: "List all available API endpoints",
-    },
-    {
-      method: "GET",
-      path: "/api/users",
-      description: "Retrieve all users",
-    },
-    {
-      method: "GET",
-      path: "/api/users/:id",
-      description: "Retrieve a specific user by ID",
-    },
-    {
-      method: "POST",
-      path: "/api/users",
-      description: "Create a new user",
-    },
-    {
-      method: "PUT",
-      path: "/api/users/:id",
-      description: "Update an existing user",
-    },
-    {
-      method: "DELETE",
-      path: "/api/users/:id",
-      description: "Delete a user",
-    },
-  ];
-  res.json({ endpoints });
+  res.json({ endpoints: getEndpointsList() });
 });
 
 // --- CRUD Endpoints for "users" ---
