@@ -1,11 +1,13 @@
 const express = require("express");
-const app = express();
+const cors = require("cors");
+const routes = require("./routes");
 
+const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send("Running => Node.js / express.js\n\n");
-});
+app.use(cors());
+app.use(express.json()); // Middleware to parse JSON requests
+app.use("/api", routes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

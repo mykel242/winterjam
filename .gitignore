@@ -1,3 +1,44 @@
-echo ".env" >> .gitignore
-echo "dist/" >> .gitignore  # If you're using TypeScript
-echo "logs/" >> .gitignore
+# Node modules (installed packages)
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables (credentials, API keys, database URLs)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
+
+# Build files (if using TypeScript or Babel)
+dist/
+build/
+
+# Dependency lock files (optional, if you want consistency use them)
+# Uncomment the one you don't want to track
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker & Podman
+.podman/
+docker-compose.override.yml
+*.pid
+*.sock
