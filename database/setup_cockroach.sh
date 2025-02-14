@@ -27,14 +27,23 @@ podman pull cockroachdb/cockroach
 echo "Creating Pod with required port mappings..."
 podman pod create --name crdb-pod -p 26257:26257 -p 8080:8080
 
-# 6. Get the current external IP address (using the en0 interface)
+# 6. Create a persistent volume for CockroachDB data if it doesn't already exist.
+if ! podman volume exists crdb_data &>/dev/null; then
+  echo "Creating persistent volume 'crdb_data'..."
+  podman volume create crdb_data
+else
+  echo "Persistent volume 'crdb_data' already exists."
+fi
+
+# 7. Get the current external IP address from the en0 interface.
 IP=$(ipconfig getifaddr en0)
 echo "Using advertise address: ${IP}"
 
-# 7. Run the CockroachDB container with the updated advertise address
-echo "Starting CockroachDB container..."
+# 8. Run the CockroachDB container with the persistent volume mounted.
+echo "Starting CockroachDB container with persistent storage..."
 podman run -d --pod crdb-pod --name cockroachdb \
+  -v crdb_data:/cockroach/cockroach-data \
   cockroachdb/cockroach:v23.1.11 start-single-node \
   --insecure --advertise-addr=${IP}
 
-echo "CockroachDB setup complete!"
+echo "CockroachDB setup complete with persistent storage."
