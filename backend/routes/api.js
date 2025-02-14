@@ -13,6 +13,8 @@ const pool = new Pool({
   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
 
+console.log("Connecting to DB at:", process.env.DB_IP || "localhost");
+
 // New endpoint: GET /api/endpoints returns a list of available endpoints.
 router.get("/endpoints", (req, res) => {
   const endpoints = [

@@ -19,7 +19,17 @@ podman build -t ${IMAGE_NAME} .
 # Run a container from the image.
 echo "Running container ${CONTAINER_NAME}..."
 
+# Get the current external IP address from the en0 interface.
+DB_IP=$(ipconfig getifaddr en0)
+DB_PORT=26257
+
+echo "Using database address: ${DB_IP}"
+
 # The host port (PUBLIC_PORT) is mapped to the container's (PRIVATE_PORT).
-podman run -d --name ${CONTAINER_NAME} -p ${PUBLIC_PORT}:${PRIVATE_PORT} ${IMAGE_NAME}
+podman run -d --name ${CONTAINER_NAME} \
+-e DB_IP=${DB_IP} \
+-e DB_PORT=${DB_PORT} \
+-p ${PUBLIC_PORT}:${PRIVATE_PORT} \
+${IMAGE_NAME}
 
 echo "Deployment complete. Your app should be accessible on localhost:${PUBLIC_PORT}."
