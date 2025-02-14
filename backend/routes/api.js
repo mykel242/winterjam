@@ -1,7 +1,11 @@
 // routes/api.js
+
 const express = require("express");
 const router = express.Router();
-const { Pool } = require("pg");
+const { Pool, types } = require("pg");
+// For PostgreSQL INT4 (OID 23) and possibly INT8 (OID 20)
+types.setTypeParser(23, (val) => parseInt(val, 10));
+types.setTypeParser(20, (val) => parseInt(val, 10));
 
 // Configure the database connection.
 const pool = new Pool({
@@ -147,4 +151,5 @@ router.delete("/users/:id", async (req, res) => {
   }
 });
 
+router.pool = pool;
 module.exports = router;
