@@ -5,6 +5,14 @@
 
 POD_NAME="crdb-pod"
 
+# Initialize the Podman machine if it hasn't been initialized
+echo "Initializing Podman machine (if needed)..."
+podman machine init 2>/dev/null || echo "Podman machine already initialized."
+
+# Start the Podman machine
+echo "Starting Podman machine..."
+podman machine start
+
 # Check if the pod exists; if not, create it.
 if ! podman pod exists "$POD_NAME"; then
     echo "Pod '$POD_NAME' does not exist. Creating it..."

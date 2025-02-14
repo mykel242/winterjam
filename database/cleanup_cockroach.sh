@@ -24,7 +24,7 @@ else
 fi
 
 # 5. Optionally, stop the Podman machine if you no longer need it running.
-echo "Stopping the Podman machine..."
-podman machine stop
+# echo "Stopping the Podman machine..."
+# podman machine stop
 
 echo "Cleanup complete!"
