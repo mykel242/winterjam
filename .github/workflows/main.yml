@@ -1,0 +1,44 @@
+name: CI for Podman Web Dev Environment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-podman:
+    runs-on: ubuntu-latest # Change to macos-latest if testing on macOS
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y podman jq curl
+
+      - name: Set Up Podman Environment
+        run: |
+          chmod +x setup_pod.sh
+          ./setup_pod.sh
+
+      - name: Load Default Data into CockroachDB
+        run: |
+          chmod +x load_data.sh
+          ./load_data.sh
+        env:
+          DB_NAME: "mydb"
+
+      - name: Run Tests
+        run: |
+          chmod +x test_pods.sh
+          ./test_pods.sh
+
+      - name: Cleanup
+        run: |
+          chmod +x cleanup_pod.sh
+          ./cleanup_pod.sh
