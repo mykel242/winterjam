@@ -1,20 +1,21 @@
-# Use an official Node.js runtime as a parent image
+# Use official Node.js image
 FROM node:18
 
-# Set the working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
+# Copy package.json and install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy the rest of the application code
+# Copy application source
 COPY . .
 
-# Expose the application port
-EXPOSE 3000
+# Set environment variables
+ENV DB_HOST=cockroachdb
+ENV DB_PORT=26257
+ENV DB_USER=root
+ENV DB_NAME=mydb
 
 # Start the server
 CMD ["node", "server.js"]
