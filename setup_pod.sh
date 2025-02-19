@@ -21,13 +21,12 @@ fi
 
 # 3. Create a Pod for the application
 echo "Creating Pod with required port mappings..."
-podman pod create --name app-pod -p 26257:26257 -p 8080:8080 -p 3000:3000 -p 5173:5173
+podman pod create --name app-pod -p 26257:26257 -p 8080:8080 -p 3000:3000
 
 # 4. Setup persistent volumes
 echo "Creating volumes for persistent storage..."
 podman volume create crdb_data
 podman volume create backend_data
-podman volume create frontend_data
 
 # 5. Start CockroachDB
 echo "Starting CockroachDB..."
