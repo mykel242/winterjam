@@ -23,9 +23,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Set up CockroachDB Connection (Moved from `api.js`)
+// ✅ Set up CockroachDB Connection
 types.setTypeParser(23, (val) => parseInt(val, 10)); // Ensure integer parsing
 types.setTypeParser(20, (val) => parseInt(val, 10));
+types.setTypeParser(types.builtins.UUID, (val) => val);
 
 const pool = new Pool({
   user: process.env.DB_USER || "root",

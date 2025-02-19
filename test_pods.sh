@@ -36,24 +36,27 @@ else
 fi
 
 # Test POST /api/users
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:$BACKEND_PORT/api/users \
+NEW_USER=$(curl -s -X POST http://localhost:$BACKEND_PORT/api/users \
   -H "Content-Type: application/json" \
   -d '{ "name": "Test User", "email": "test@example.com" }')
-if [[ "$RESPONSE" -eq 201 ]]; then
-  echo "✅ POST /api/users is working!"
+
+NEW_USER_UUID=$(echo "$NEW_USER" | jq -r '.uuid')
+
+if [[ "$NEW_USER_UUID" != "null" && -n "$NEW_USER_UUID" ]]; then
+  echo "✅ POST /api/users is working! New user UUID: $NEW_USER_UUID"
 else
-  echo "❌ POST /api/users failed! HTTP Code: $RESPONSE"
+  echo "❌ POST /api/users failed! No UUID returned."
   exit 1
 fi
 
-# Test DELETE /api/users/:id
-USER_ID=$(curl -s http://localhost:$BACKEND_PORT/api/users | jq -r '.[-1].id')
-if [[ -n "$USER_ID" && "$USER_ID" != "null" ]]; then
-  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE http://localhost:$BACKEND_PORT/api/users/$USER_ID)
+# Test DELETE /api/users/:uuid
+USER_UUID=$(curl -s http://localhost:$BACKEND_PORT/api/users | jq -r '.[-1].uuid')
+if [[ -n "$USER_UUID" && "$USER_UUID" != "null" ]]; then
+  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE http://localhost:$BACKEND_PORT/api/users/$USER_UUID)
   if [[ "$RESPONSE" -eq 200 ]]; then
-    echo "✅ DELETE /api/users/$USER_ID is working!"
+    echo "✅ DELETE /api/users/$USER_UUID is working!"
   else
-    echo "❌ DELETE /api/users/$USER_ID failed! HTTP Code: $RESPONSE"
+    echo "❌ DELETE /api/users/$USER_UUID failed! HTTP Code: $RESPONSE"
     exit 1
   fi
 else

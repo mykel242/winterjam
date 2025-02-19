@@ -9,14 +9,14 @@ router.get("/", (req, res) => {
       { method: "GET", path: "/api/users", description: "Retrieve all users" },
       {
         method: "GET",
-        path: "/api/users/:id",
-        description: "Retrieve a user by ID",
+        path: "/api/users/:uuid",
+        description: "Retrieve a user by UUID",
       },
       { method: "POST", path: "/api/users", description: "Create a new user" },
-      { method: "PUT", path: "/api/users/:id", description: "Update a user" },
+      { method: "PUT", path: "/api/users/:uuid", description: "Update a user" },
       {
         method: "DELETE",
-        path: "/api/users/:id",
+        path: "/api/users/:uuid",
         description: "Delete a user",
       },
     ],
@@ -33,18 +33,24 @@ router.get("/users", async (req, res, next) => {
   }
 });
 
-// ✅ GET /api/users/:id - Retrieve a user by ID
-router.get("/users/:id", async (req, res, next) => {
-  const { id } = req.params;
+// ✅ GET /api/users/:uuid - Retrieve a user by UUID
+router.get("/users/:uuid", async (req, res, next) => {
+  const { uuid } = req.params;
+
+  // Debug log to verify incoming UUID
+  console.log("🔍 Received UUID:", uuid, typeof uuid); // Ensure it's a string
+
   try {
     const result = await req.db.query(
-      "SELECT * FROM users WHERE id::STRING = $1",
-      [id],
+      "SELECT * FROM users WHERE uuid = $1",
+      [uuid], // No casting needed, pg will handle it
     );
-    if (result.rows.length === 0)
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: "User not found" });
+    }
     res.json(result.rows[0]);
   } catch (err) {
+    console.error("❌ Error fetching user:", err.message);
     next(err);
   }
 });
@@ -56,6 +62,7 @@ router.post("/users", async (req, res, next) => {
     return res.status(400).json({ error: "name and email are required" });
 
   try {
+    // ✅ Insert without specifying id (uuid is auto-generated)
     const result = await req.db.query(
       "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
       [name, email],
@@ -66,17 +73,19 @@ router.post("/users", async (req, res, next) => {
   }
 });
 
-// ✅ PUT /api/users/:id - Update a user
-router.put("/users/:id", async (req, res, next) => {
-  const { id } = req.params;
+// ✅ PUT /api/users/:uuid - Update a user
+router.put("/users/:uuid", async (req, res, next) => {
+  const { uuid } = req.params;
   const { name, email } = req.body;
+  // Debug log to verify incoming UUID
+  console.log("🔍 Received UUID:", uuid, typeof uuid); // Ensure it's a string
   if (!name || !email)
     return res.status(400).json({ error: "name and email are required" });
 
   try {
     const result = await req.db.query(
-      "UPDATE users SET name = $1, email = $2 WHERE id::STRING = $3 RETURNING *",
-      [name, email, id],
+      "UPDATE users SET name = $1, email = $2 WHERE uuid = $3 RETURNING *",
+      [name, email, uuid],
     );
     if (result.rows.length === 0)
       return res.status(404).json({ error: "User not found" });
@@ -86,13 +95,16 @@ router.put("/users/:id", async (req, res, next) => {
   }
 });
 
-// ✅ DELETE /api/users/:id - Remove a user
-router.delete("/users/:id", async (req, res, next) => {
-  const { id } = req.params;
+// ✅ DELETE /api/users/:uuid - Remove a user
+router.delete("/users/:uuid", async (req, res, next) => {
+  const { uuid } = req.params;
+  // Debug log to verify incoming UUID
+  console.log("🔍 Received UUID:", uuid, typeof uuid); // Ensure it's a string
+
   try {
     const result = await req.db.query(
-      "DELETE FROM users WHERE id::STRING = $1 RETURNING *",
-      [id],
+      "DELETE FROM users WHERE uuid = $1 RETURNING *",
+      [uuid],
     );
     if (result.rows.length === 0)
       return res.status(404).json({ error: "User not found" });
