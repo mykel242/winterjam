@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 # Automated test script for Backend & CockroachDB Pods
 
 BACKEND_PORT=3000  # Change if your backend runs on a different port
@@ -27,7 +27,7 @@ fi
 echo "🔍 Testing API endpoints..."
 
 # Test GET /api/users
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$BACKEND_PORT/api/users)
+RESPONSE=$(curl --fail -s -o /dev/null -w "%{http_code}" http://localhost:$BACKEND_PORT/api/users)
 if [[ "$RESPONSE" -eq 200 ]]; then
   echo "✅ GET /api/users is working!"
 else

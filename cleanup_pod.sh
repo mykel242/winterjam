@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 # cleanup_pod.sh
 # Stops and removes the Podman pod, containers, and associated volumes.
 # Usage: ./cleanup_pod.sh [--remove-db]
