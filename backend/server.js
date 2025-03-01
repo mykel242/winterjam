@@ -1,18 +1,24 @@
 // server.js
 const express = require("express");
-const cors = require("cors");
 const dotenv = require("dotenv");
 const { Pool, types } = require("pg");
 const routes = require("./routes");
+const cors = require("cors");
 
 // Load environment variables
 dotenv.config();
-
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-// ✅ Enable CORS (for frontend communication)
-app.use(cors());
+// Allow all origins or specify allowed origins
+const corsOptions = {
+  origin: "*", // 👈 Allows all origins (not recommended for production)
+  methods: "GET,POST,PUT,DELETE",
+  allowedHeaders: "Content-Type",
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
 
 // ✅ Enable JSON parsing
 app.use(express.json());
